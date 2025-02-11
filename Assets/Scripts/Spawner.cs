@@ -5,6 +5,8 @@ public class Spawner : MonoBehaviour
 {
     [SerializeField] private Enemy _prefab;
     [SerializeField] private Transform[] _spawnPoint;
+    [SerializeField] private float _delay = 2f;
+    [SerializeField] private Prey _prey;
 
     private void Start()
     {
@@ -13,26 +15,22 @@ public class Spawner : MonoBehaviour
 
     private IEnumerator SpawnEnemies()
     {
+        WaitForSeconds delay = new WaitForSeconds(_delay);
 
         while (true)
         {
             int minLenght = 0;
             int maxLenght = _spawnPoint.Length;
-            float minValue = -1f;
-            float maxValue = 1f;
-            Vector3 moveDirection = new Vector3(UnityEngine.Random.Range(minValue,maxValue), UnityEngine.Random.Range(minValue,maxValue), UnityEngine.Random.Range(minValue, maxValue));
+            Transform moveDirection = _prey.transform;
 
             Transform randomSpawnPoit = _spawnPoint[UnityEngine.Random.Range(minLenght, maxLenght)];
             Enemy enemy = Instantiate(_prefab, randomSpawnPoit.position, Quaternion.identity);
 
-            Enemy enemyScript = enemy.GetComponent<Enemy>();
-
-            if (enemyScript != null) 
+            if (enemy != null)
             {
-                enemyScript.SetDirection(moveDirection);
+                enemy.SetDirection(moveDirection);
+                yield return delay;
             }
-
-            yield return new WaitForSeconds(2f);
         }
     }
 
